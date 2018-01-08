@@ -25,7 +25,7 @@ RUN a2enmod rewrite
 CMD mkdir /var/www
 WORKDIR /var/www
 
-RUN git clone --depth 1 https://github.com/OpenJabNab/OpenJabNab.git
+RUN git clone --depth 1 https://github.com/TimmyOtool/OpenJabNab.git
 WORKDIR OpenJabNab/server
 
 RUN qmake -r
