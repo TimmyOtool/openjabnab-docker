@@ -16,11 +16,14 @@ RUN apt-get update && apt-get install -y \
 	php5-gd \ 
 	php5-mcrypt \
 	php5-curl\
+	vim\
 	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod php5
 RUN a2enmod rewrite
+
+
 
 CMD mkdir /var/www
 WORKDIR /var/www
@@ -32,9 +35,17 @@ RUN qmake -r
 RUN make
 
 RUN cp ./openjabnab.ini-dist ./bin/openjabnab.ini
+
+
+
 RUN sed -i -e"s/^StandAloneAuthBypass = false/StandAloneAuthBypass=true/" ./bin/openjabnab.ini
 RUN sed -i -e"s/^AllowUserManageBunny=false/AllowUserManageBunny=true/" ./bin/openjabnab.ini
 RUN sed -i -e"s/^AllowUserManageBunny=false/AllowUserManageBunny=true/" ./bin/openjabnab.ini
+
+RUN chmod -R +w /var/www/OpenJabNab/server/bin
+RUN chmod -R +w /var/www/OpenJabNab/server/bin/plugins
+#RUN chmod -R +w /var/www/OpenJabNab/server/bin/accounts
+#RUN chmod -R +w /var/www/OpenJabNab/server/bin/bunnies
 
 ENV APP_ROOTURL localhost
 ENV APACHE_RUN_USER www-data
@@ -46,10 +57,13 @@ ENV APACHE_PID_FILE /var/run/apache2.pid
 EXPOSE 8080 8080
 EXPOSE 5222 5222
 EXPOSE 80 80
+VOLUME ["/var/www/OpenJabNab/server/bin/accounts","/var/www/OpenJabNab/server/bin/bunnies"]
+
 
 ADD plugin_auth.ini ./bin/plugin_auth.ini
 ADD apache-config.conf /etc/apache2/sites-enabled/000-default.conf
 RUN chmod 777 ../http-wrapper/ojn_admin/include
 
-COPY start.sh /usr/local/bin/
+ADD start.sh /usr/local/bin/start.sh
+RUN chmod 777 /usr/local/bin/start.sh
 CMD ["start.sh"]
