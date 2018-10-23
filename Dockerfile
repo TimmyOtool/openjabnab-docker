@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-MAINTAINER Fred Bricon <fbricon@gmail.com>
+MAINTAINER TimmyOtool <melinm@gmail.com>
 
 RUN apt-get update && apt-get install -y \
 	ca-certificates \
@@ -23,12 +23,11 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod php5
 RUN a2enmod rewrite
 
-
-
 CMD mkdir /var/www
 WORKDIR /var/www
 
 RUN git clone --depth 1 https://github.com/TimmyOtool/OpenJabNab.git
+
 WORKDIR OpenJabNab/server
 
 RUN qmake -r
@@ -36,16 +35,11 @@ RUN make
 
 RUN cp ./openjabnab.ini-dist ./bin/openjabnab.ini
 
-
-
 RUN sed -i -e"s/^StandAloneAuthBypass = false/StandAloneAuthBypass=true/" ./bin/openjabnab.ini
-RUN sed -i -e"s/^AllowUserManageBunny=false/AllowUserManageBunny=true/" ./bin/openjabnab.ini
 RUN sed -i -e"s/^AllowUserManageBunny=false/AllowUserManageBunny=true/" ./bin/openjabnab.ini
 
 RUN chmod -R +w /var/www/OpenJabNab/server/bin
 RUN chmod -R +w /var/www/OpenJabNab/server/bin/plugins
-#RUN chmod -R +w /var/www/OpenJabNab/server/bin/accounts
-#RUN chmod -R +w /var/www/OpenJabNab/server/bin/bunnies
 
 ENV APP_ROOTURL localhost
 ENV APACHE_RUN_USER www-data
@@ -58,7 +52,6 @@ EXPOSE 8080 8080
 EXPOSE 5222 5222
 EXPOSE 80 80
 VOLUME ["/var/www/OpenJabNab/server/bin/accounts","/var/www/OpenJabNab/server/bin/bunnies"]
-
 
 ADD plugin_auth.ini ./bin/plugin_auth.ini
 ADD apache-config.conf /etc/apache2/sites-enabled/000-default.conf
