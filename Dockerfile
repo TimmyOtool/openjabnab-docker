@@ -49,6 +49,7 @@ ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 
 EXPOSE 8080 8080
+EXPOSE 8081 8081
 EXPOSE 5222 5222
 EXPOSE 80 80
 VOLUME ["/var/www/OpenJabNab/server/bin/accounts","/var/www/OpenJabNab/server/bin/bunnies"]
