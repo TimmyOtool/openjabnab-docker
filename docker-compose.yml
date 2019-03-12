@@ -1,0 +1,47 @@
+version: '3'
+services:
+
+    openjabnab:
+        build:
+            context: .
+        restart: always
+        networks:
+            - openjabnab
+            - traefik
+        labels:
+            - "traefik.web.frontend.rule=Host:openjabnab"
+            - "traefik.web.port=80"
+            - "traefik.web.docker.network=traefik"
+            - "traefik.web.frontend.entryPoints=http"
+            - "traefik.xmpp.frontend.rule=Host:openjabnab"
+            - "traefik.xmpp.port=5222"
+            - "traefik.xmpp.docker.network=traefik"
+            - "traefik.xmpp.frontend.entryPoints=xmpp"
+            - "traefik.nab.frontend.rule=Host:openjabnab"
+            - "traefik.nab.port=8080"
+            - "traefik.nab.frontend.entryPoints=nab"
+            - "traefik.nab.docker.network=traefik"
+
+    traefik:
+        container_name: traefik
+        image: traefik # The official Traefik docker image
+        command: --api --docker --entryPoints='Name:nab Address::8081' --entryPoints='Name:xmpp Address::5222' --entryPoints='Name:http Address::80' 
+            # Enables the web UI and tells Traefik to listen to docker
+        ports:
+             - "80:80"     # The HTTP port
+             - "5222:5222"
+             - "8080:8080"
+            # - "443:443"
+             - "8180:8080" # The Web UI (enabled by --api)
+        volumes:
+             - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+        restart: always
+        networks:
+             - traefik
+
+            
+networks:
+    openjabnab:
+      driver: bridge
+    traefik:
+      external: true
